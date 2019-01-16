@@ -62,7 +62,7 @@ class PredatorPreyTask():
     """
 
     def __init__(self, N=5, grid_size=20, detection_range=2, communication_cost=0.01, step_cost=0.03, avoid_closest=True, forbidden_cost=10., return_absolute=True,
-                prey_detection_range=2, uncatched_cost=1., T=50):
+                prey_detection_range=2, uncatched_cost=1., T=50, immobile=True, fixed=True):
         self.N = N
         self.grid_size = grid_size
         self.detection_range = detection_range
@@ -73,6 +73,8 @@ class PredatorPreyTask():
         self.forbidden_cost = forbidden_cost
         self.prey_detection_range = prey_detection_range
         self.uncatched_cost = uncatched_cost
+        self.immobile = immobile
+        self.fixed = fixed
         self.T = T
 
         self.max_pos_index = 1 + grid_size * grid_size
@@ -119,7 +121,9 @@ class PredatorPreyTask():
         prey_coord = self.prey_coord
 
         # move prey
-        if self.avoid_closest:
+        if self.immobile:
+            choice = 0
+        elif self.avoid_closest:
             distances = [np.abs(p[1] - prey_coord[1]) + np.abs(p[0] - prey_coord[0]) for p in pred_coord]
             i = np.argmin(distances)
             a, b = pred_coord[i][0] - prey_coord[0], pred_coord[i][1] - prey_coord[1]
