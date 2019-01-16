@@ -61,8 +61,8 @@ class PredatorPreyTask():
     it can see it) instead of its relative position
     """
 
-    def __init__(self, N=5, grid_size=20, detection_range=2, communication_cost=-0.01, step_cost=-0.03, avoid_closest=True, forbidden_cost=-10., return_absolute=True,
-                prey_detection_range=2, uncatched=1.):
+    def __init__(self, N=5, grid_size=20, detection_range=2, communication_cost=0.01, step_cost=0.03, avoid_closest=True, forbidden_cost=10., return_absolute=True,
+                prey_detection_range=2, uncatched_cost=1., T=50):
         self.N = N
         self.grid_size = grid_size
         self.detection_range = detection_range
@@ -72,7 +72,8 @@ class PredatorPreyTask():
         self.return_absolute = return_absolute
         self.forbidden_cost = forbidden_cost
         self.prey_detection_range = prey_detection_range
-        self.end_reward = end_reward
+        self.uncatched_cost = uncatched_cost
+        self.T = T
 
         self.max_pos_index = 1 + grid_size * grid_size
         self.max_det_index = 1 + detection_range * detection_range
@@ -109,9 +110,11 @@ class PredatorPreyTask():
         self.prey_coord = utils.decode_pos(prey_pos, self.grid_size)
         state = [positions, [self.vision(p, self.prey_coord) for p in self.pred_coord]]
         terminal_state = self.is_terminated()
+        self.t = 0
         return state, terminal_state
     
     def step(self, move_action, comm_action):
+        self.t += 1
         pred_coord = self.pred_coord
         prey_coord = self.prey_coord
 
@@ -147,7 +150,13 @@ class PredatorPreyTask():
         terminal_state = self.is_terminated()
         
         # update reward 
-        reward = [self.communication_cost * comm_action[i] + self.step_cost + self.forbidden_cost * is_blocked[i] for i in range(self.N) + (self.end_reward if terminal_state else 0)]
+        reward = [ 
+            - self.communication_cost * comm_action[i] 
+            - self.step_cost 
+            - self.forbidden_cost * is_blocked[i]
+            - (self.uncatched_cost if not terminal_state and self.t >= self.T else 0)
+            for i in range(self.N) 
+        ]
 
         # compute next state
         next_state = [
