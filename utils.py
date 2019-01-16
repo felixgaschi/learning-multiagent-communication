@@ -27,4 +27,4 @@ def move_pos(coord, dir, size):
         new_coord = coord[0], max(0, coord[1] - 1)
     else:
         new_coord = coord
-    return new_coord, (new_coord == coord)
+    return new_coord, (new_coord == coord and dir != 0)
