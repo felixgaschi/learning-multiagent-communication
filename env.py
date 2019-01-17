@@ -42,6 +42,13 @@ move_dict = {
     4: np.array([ 0,-1])
 }
 
+alternatives = {
+    1: [3, 4],
+    2: [3, 4],
+    3: [1, 2],
+    4: [1, 2]
+}
+
 class PredatorPreyTask():
     """
     Task for predator-prey task. Predators are looking for a prey inside a grid, at each step, they
@@ -62,7 +69,7 @@ class PredatorPreyTask():
     """
 
     def __init__(self, N=5, grid_size=20, detection_range=2, communication_cost=0.01, step_cost=0.03, avoid_closest=True, forbidden_cost=10., return_absolute=True,
-                prey_detection_range=2, uncatched_cost=1., T=50, immobile=True, fixed=True):
+                prey_detection_range=2, uncatched_cost=1., T=50, immobile=False, force_flee=False):
         self.N = N
         self.grid_size = grid_size
         self.detection_range = detection_range
@@ -74,7 +81,6 @@ class PredatorPreyTask():
         self.prey_detection_range = prey_detection_range
         self.uncatched_cost = uncatched_cost
         self.immobile = immobile
-        self.fixed = fixed
         self.T = T
 
         self.max_pos_index = 1 + grid_size * grid_size
@@ -129,19 +135,15 @@ class PredatorPreyTask():
             a, b = pred_coord[i][0] - prey_coord[0], pred_coord[i][1] - prey_coord[1]
             if np.abs(a) + np.abs(b) > self.prey_detection_range:
                 choice = 0
-            elif b > a:
-                if b > -a:
-                    choice = 4
-                else:
-                    choice = 2
             else:
-                if b > -a:
-                    choice = 1
-                else:
-                    choice = 3
+                choices = [(utils.move_pos(prey_coord, choice, self.grid_size), choice) for choice in range(1, 5)]
+                
+                choices = [(c[0][0], c[1]) for c in choices if not c[0][1]]
+                print(choices)
+                choice = max(choices, key=lambda x: np.abs(x[0][0] - pred_coord[i][0]) + np.abs(x[0][1] - pred_coord[i][1]))[1]
         else:
             choice = np.random.choice([1,2,3,4])
-        new_prey_coord, _ = utils.move_pos(prey_coord, choice, self.grid_size)
+        new_prey_coord, blocked = utils.move_pos(prey_coord, choice, self.grid_size)
         self.prey_coord = new_prey_coord
 
         # move predators
