@@ -1,3 +1,7 @@
+import numpy as np 
+import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
+
 def decode_pos(pos, size, offset=1):
     """
     transforms integer position on grid into i, j
@@ -64,7 +68,7 @@ def plot_episode(pred_coord_history, prey_coord_history, grid_size, figsize = (2
     
     n_agents = pred_coord_history.shape[1]
     n_cols = n_cols
-    n_rows = np.int(np.ceil((n_agents + 1)  / n_col))
+    n_rows = np.int(np.ceil((n_agents + 1)  / n_cols))
 
     tt = np.arange(pred_coord_history.shape[0])
 
