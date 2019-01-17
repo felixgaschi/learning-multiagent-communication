@@ -92,13 +92,14 @@ class PredatorPreyTask():
         """
         x, y = pred_coord
         xprim, yprim = prey_coord
-        a, b = xprim - x + self.detection_range, yprim - y + self.detection_range
+        a, b = xprim - x, yprim - y
         if self.return_absolute:
-            if a <= 2 * self.detection_range and b <= 2 * self.detection_range and a >= 0 and b >= 0:
+            if np.abs(a) + np.abs(b) <= self.prey_detection_range:
                 return utils.encode_pos(xprim, yprim, self.grid_size)
             else:
                 return 0
         else:
+            raise Error("return_absolute = False is not supported yet")
             return utils.encode_pos(a, b, 2 * self.detection_range)
     
     def is_terminated(self):
@@ -119,9 +120,10 @@ class PredatorPreyTask():
         state = [positions, [self.vision(p, self.prey_coord) for p in self.pred_coord]]
         terminal_state = self.is_terminated()
         self.t = 0
-        self.prey_coord_history = []
-        self.pred_coord_history = []
-        self.comm_action_history = []
+        self.prey_coord_history = [self.prey_coord]
+        self.pred_coord_history = [self.pred_coord]
+        self.comm_action_history = [np.zeros(self.N)]
+        self.vision_history = [state[1]]
         return state, terminal_state
     
     def step(self, move_action, comm_action):
@@ -175,6 +177,7 @@ class PredatorPreyTask():
             [utils.encode_pos(p[0], p[1], self.grid_size) for p in self.pred_coord], 
             [self.vision(p, self.prey_coord) for p in self.pred_coord]
         ]
+        self.vision_history.append(next_state[1])
         
         return next_state, reward, terminal_state
 
