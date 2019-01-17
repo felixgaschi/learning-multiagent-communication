@@ -149,14 +149,14 @@ class PredatorPreyTask():
             choice = np.random.choice([1,2,3,4])
 
         new_prey_coord, blocked = utils.move_pos(prey_coord, choice, self.grid_size)
-        self.prey_coord_history.append(self.prey_coord)
+        self.prey_coord_history.append(new_prey_coord)
         self.prey_coord = new_prey_coord
 
         # move predators
         infos = [utils.move_pos(pred_coord[i], move_action[i], self.grid_size) for i in range(self.N)]
         new_coords = [elt[0] for elt in infos]
         is_blocked = [1 if elt[1] else 0 for elt in infos]
-        self.pred_coord_history.append(self.pred_coord)
+        self.pred_coord_history.append(new_coords)
         self.pred_coord = new_coords
 
         # compute terminal_state
