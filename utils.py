@@ -64,7 +64,7 @@ def plot_indiv(points, ax, title, grid_size, tt, prey = False):
     ax.grid()
     ax.set_title(title)
     
-def plot_episode(pred_coord_history, prey_coord_history, grid_size, figsize = (20, 10), n_cols = 3):
+def plot_episode(pred_coord_history, prey_coord_history, comm_action_history, grid_size, figsize = (20, 10), n_cols = 3):
     
     n_agents = pred_coord_history.shape[1]
     n_cols = n_cols

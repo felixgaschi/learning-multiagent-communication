@@ -121,6 +121,7 @@ class PredatorPreyTask():
         self.t = 0
         self.prey_coord_history = []
         self.pred_coord_history = []
+        self.comm_action_history = []
         return state, terminal_state
     
     def step(self, move_action, comm_action):
@@ -167,6 +168,7 @@ class PredatorPreyTask():
             - (self.uncatched_cost if not terminal_state and self.t >= self.T else 0)
             for i in range(self.N) 
         ]
+        self.comm_action_history.append(comm_action)
 
         # compute next state
         next_state = [
