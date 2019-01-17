@@ -139,7 +139,6 @@ class PredatorPreyTask():
                 choices = [(utils.move_pos(prey_coord, choice, self.grid_size), choice) for choice in range(1, 5)]
                 
                 choices = [(c[0][0], c[1]) for c in choices if not c[0][1]]
-                print(choices)
                 choice = max(choices, key=lambda x: np.abs(x[0][0] - pred_coord[i][0]) + np.abs(x[0][1] - pred_coord[i][1]))[1]
         else:
             choice = np.random.choice([1,2,3,4])
