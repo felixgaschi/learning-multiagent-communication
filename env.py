@@ -97,7 +97,7 @@ class PredatorPreyTask():
         xprim, yprim = prey_coord
         a, b = xprim - x, yprim - y
         if self.return_absolute:
-            if np.abs(a) + np.abs(b) <= self.pred_detection_range:
+            if np.abs(a) + np.abs(b) <= self.detection_range:
                 return utils.encode_pos(xprim, yprim, self.grid_size)
             else:
                 return 0
@@ -156,9 +156,11 @@ class PredatorPreyTask():
             else:
                 choices = [(utils.move_pos(prey_coord, choice, self.grid_size), choice) for choice in range(1, 5)]
                 
-                choices = [(c[0][0], c[1]) for c in choices if not c[0][1]]
+                choices = [(c[0][0], c[1]) for c in choices if not c[0][1] and not c[0][0] in pred_coord]
                 np.random.shuffle(choices)
-                choice = max(choices, key=lambda x: np.abs(x[0][0] - pred_coord[i][0]) + np.abs(x[0][1] - pred_coord[i][1]))[1]
+                choice = max(choices, key=lambda x: np.abs(x[0][0] - pred_coord[i][0]) + np.abs(x[0][1] - pred_coord[i][1]))[1] \
+                    if len(choices) > 0 \
+                    else 0
         else:
             choice = np.random.choice([1,2,3,4])
 
