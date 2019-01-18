@@ -56,9 +56,9 @@ def plot_indiv(points, ax, title, grid_size, tt, prey = False):
         plt.colorbar(line, ax=ax)
     else:
         if not prey:
-            ax.plot(points[0,0], points[0,1], 's', color = 'b', markersize = 10)
+            ax.plot(points[0,1], points[0,0], 's', color = 'b', markersize = 10)
         else:
-            ax.plot(points[0,0], points[0,1], 's', color = 'r', markersize = 10)
+            ax.plot(points[0,1], points[0,0], 's', color = 'r', markersize = 10)
             
     ax.set_xlim(-1, grid_size)
     ax.set_ylim(grid_size, -1)
