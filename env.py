@@ -69,7 +69,7 @@ class PredatorPreyTask():
     """
 
     def __init__(self, N=5, grid_size=20, detection_range=2, communication_cost=0.01, step_cost=0.03, avoid_closest=True, forbidden_cost=10., return_absolute=True,
-                prey_detection_range=2, uncatched_cost=1., T=50, immobile=False, force_flee=False):
+                prey_detection_range=2, uncatched_cost=1., T=50, immobile=False, restart_range = 1, force_flee=False):
         self.N = N
         self.grid_size = grid_size
         self.detection_range = detection_range
@@ -82,6 +82,9 @@ class PredatorPreyTask():
         self.uncatched_cost = uncatched_cost
         self.immobile = immobile
         self.T = T
+        self.restart_range = restart_range
+        
+        self.middle = int(grid_size/2)
 
         self.max_pos_index = 1 + grid_size * grid_size
         self.max_det_index = 1 + detection_range * detection_range
@@ -99,7 +102,7 @@ class PredatorPreyTask():
             else:
                 return 0
         else:
-            raise Error("return_absolute = False is not supported yet")
+            raise(ValueError("return_absolute = False is not supported yet"))
             return utils.encode_pos(a, b, 2 * self.detection_range)
     
     def is_terminated(self):
@@ -111,10 +114,20 @@ class PredatorPreyTask():
             if p == self.prey_coord:
                 return True
         return False
+    
+    def sample_starting_pos(self):
+        
+        x, y = np.random.randint(max(0,self.middle - self.restart_range), min(self.grid_size, self.middle + self.restart_range),2)
+        
+        return utils.encode_pos(x,y,self.grid_size)
+                       
 
     def reset(self):
-        positions = np.random.choice(range(1, self.max_pos_index), replace=False, size = self.N)
-        prey_pos = np.random.randint(1, self.max_pos_index)
+        
+        
+        
+        positions = np.array([self.sample_starting_pos() for i in range(self.N)])
+        prey_pos = self.sample_starting_pos()
         self.pred_coord = [utils.decode_pos(p, self.grid_size) for p in positions]
         self.prey_coord = utils.decode_pos(prey_pos, self.grid_size)
         state = [positions, [self.vision(p, self.prey_coord) for p in self.pred_coord]]
@@ -144,6 +157,7 @@ class PredatorPreyTask():
                 choices = [(utils.move_pos(prey_coord, choice, self.grid_size), choice) for choice in range(1, 5)]
                 
                 choices = [(c[0][0], c[1]) for c in choices if not c[0][1]]
+                np.random.shuffle(choices)
                 choice = max(choices, key=lambda x: np.abs(x[0][0] - pred_coord[i][0]) + np.abs(x[0][1] - pred_coord[i][1]))[1]
         else:
             choice = np.random.choice([1,2,3,4])
