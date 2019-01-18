@@ -67,7 +67,7 @@ def plot_indiv(points, ax, title, grid_size, tt, prey = False):
     ax.grid()
     ax.set_title(title)
     
-def plot_episode(pred_coord_history, prey_coord_history, comm_action_history, vision_history, grid_size, figsize = (20, 10), n_cols = 3):
+def plot_episode(pred_coord_history, prey_coord_history, comm_action_history, vision_history, grid_size, figsize = (20, 10), n_cols = 3, fileName=None):
     
     n_agents = pred_coord_history.shape[1]
     n_cols = n_cols
@@ -109,5 +109,6 @@ def plot_episode(pred_coord_history, prey_coord_history, comm_action_history, vi
     points = prey_coord_history
 
     plot_indiv(points, ax, "Prey", grid_size, tt, prey = True)
-        
+    if fileName:
+        plt.savefig(fileName, dpi=300)
     plt.show()
