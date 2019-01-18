@@ -97,7 +97,7 @@ class PredatorPreyTask():
         xprim, yprim = prey_coord
         a, b = xprim - x, yprim - y
         if self.return_absolute:
-            if np.abs(a) + np.abs(b) <= self.prey_detection_range:
+            if np.abs(a) + np.abs(b) <= self.pred_detection_range:
                 return utils.encode_pos(xprim, yprim, self.grid_size)
             else:
                 return 0
