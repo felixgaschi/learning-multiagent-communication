@@ -1,7 +1,5 @@
 # Learning Multi-Agent Communication in Reinforcement Learning
-======
 ## Final project of Reinforcement Learning (MVA 2018-2019)
-------
 
 *F. Gaschi, R. Zimmer*
 
